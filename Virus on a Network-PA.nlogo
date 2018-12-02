@@ -13,7 +13,7 @@ to setup
   clear-all
   setup-pa-network
   ask n-of initial-outbreak-size turtles
-    [ become-infected ]
+    [ become-infected 1 ]
   ask links [ set color white ]
   reset-ticks
 end
@@ -116,8 +116,8 @@ end
 ;;;;;;;;;;;;;;;
 ;;; PA code ;;;
 ;;;;;;;;;;;;;;;
-to become-infected  ;; turtle procedure
-  set virus-force virus-force + increase-virus-force
+to become-infected [vf] ;; turtle procedure
+  set virus-force vf + vf * increase-virus-force / 100
   ;set resistance resistance - 1
   set infected? true
   set resistant? false
@@ -134,7 +134,7 @@ to become-susceptible  ;; turtle procedure
   set infected-ticks 0
 end
 
-to become-resistant  ;; turtle procedure
+to gain-resistance ;; turtle procedure
   ;set virus-force virus-force - 1
   ifelse virus-force > resistance
   [  set resistance resistance + increase-node-resistance ]
@@ -142,8 +142,8 @@ to become-resistant  ;; turtle procedure
     set infected? false
     set resistant? true
     set dead? false
-    set color gray
-    ask my-links [ set color gray - 2 ]
+    set color blue
+    ask my-links [ set color gray ]
     set infected-ticks 0
   ]
 end
@@ -163,8 +163,12 @@ to spread-virus
   ask turtles with [infected?]
     ;[ ask link-neighbors with [not resistant?]
   [ ask out-link-neighbors with [not dead? and not infected? and (not resistant? or resistance < [virus-force] of myself)]
-    [ if random-float 100 < virus-spread-chance
-            [ become-infected ] ] ]
+    [
+      let vf [virus-force] of myself
+      if random-float 100 < virus-spread-chance
+      [ become-infected vf ]
+    ]
+  ]
 end
 
 to do-virus-checks
@@ -172,9 +176,10 @@ to do-virus-checks
   [
     if random 100 < recovery-chance
     [
-      ifelse random 100 < gain-resistance-chance
-        [ become-resistant ]
-        [ become-susceptible ]
+      gain-resistance
+      ;;ifelse random 100 < gain-resistance-chance
+      ;;  [ become-resistant ]
+      ;;  [ become-susceptible ]
     ]
   ]
   ask turtles with [infected? and infected-ticks >= sick-ticks-to-die]
@@ -190,8 +195,8 @@ end
 GRAPHICS-WINDOW
 226
 10
-1004
-638
+1005
+639
 -1
 -1
 15.122
@@ -460,7 +465,7 @@ increase-node-resistance
 increase-node-resistance
 0
 15
-2.0
+4.0
 1
 1
 NIL
@@ -474,11 +479,11 @@ SLIDER
 increase-virus-force
 increase-virus-force
 0
-15
-1.0
+30
+17.0
+0.5
 1
-1
-NIL
+%
 HORIZONTAL
 
 @#$#@#$#@
