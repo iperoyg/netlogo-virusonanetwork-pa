@@ -137,7 +137,8 @@ end
 to gain-resistance ;; turtle procedure
   ;set virus-force virus-force - 1
   ifelse virus-force > resistance
-  [  set resistance resistance + increase-node-resistance ]
+  [
+    set resistance resistance + resistance * increase-node-resistance / 10 ]
   [
     set infected? false
     set resistant? true
@@ -155,7 +156,7 @@ to become-dead ;; turtle procedure
   set resistant? false
   set dead? true
   set color brown
-  ask my-links [ set color gray + 3 ]
+  ask my-links [ set color gray - 2 ]
 end
 
 
@@ -184,7 +185,7 @@ to do-virus-checks
   ]
   ask turtles with [infected? and infected-ticks >= sick-ticks-to-die]
   [
-    become-dead
+    if nodes-can-die [become-dead]
   ]
 end
 
@@ -221,30 +222,15 @@ ticks
 
 SLIDER
 10
-252
-215
-285
-gain-resistance-chance
-gain-resistance-chance
-0.0
-100
-25.0
-1
-1
-%
-HORIZONTAL
-
-SLIDER
-10
 217
 215
 250
 recovery-chance
 recovery-chance
 0.0
+50.0
 10.0
-5.0
-0.1
+0.5
 1
 %
 HORIZONTAL
@@ -257,8 +243,8 @@ SLIDER
 virus-spread-chance
 virus-spread-chance
 0.0
-10.0
-10.0
+20.0
+5.0
 0.1
 1
 %
@@ -343,7 +329,7 @@ virus-check-frequency
 virus-check-frequency
 1
 20
-1.0
+4.0
 1
 1
 ticks
@@ -357,8 +343,8 @@ SLIDER
 initial-outbreak-size
 initial-outbreak-size
 1
-number-of-nodes
-30.0
+number-of-nodes / 10
+50.0
 1
 1
 NIL
@@ -376,10 +362,10 @@ enable-directed-links
 -1000
 
 SLIDER
-11
-336
-214
+10
 369
+214
+402
 sick-ticks-to-die
 sick-ticks-to-die
 0
@@ -441,7 +427,7 @@ MONITOR
 547
 Max Virus Force
 max [virus-force] of turtles
-17
+2
 1
 11
 
@@ -452,23 +438,23 @@ MONITOR
 546
 Max Resistance
 max [resistance] of turtles
-17
+2
 1
 11
 
 SLIDER
 17
 440
-199
+200
 473
 increase-node-resistance
 increase-node-resistance
 0
-15
-4.0
+30
+10.0
+0.5
 1
-1
-NIL
+%
 HORIZONTAL
 
 SLIDER
@@ -480,11 +466,22 @@ increase-virus-force
 increase-virus-force
 0
 30
-17.0
+10.0
 0.5
 1
 %
 HORIZONTAL
+
+SWITCH
+10
+332
+215
+365
+nodes-can-die
+nodes-can-die
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
