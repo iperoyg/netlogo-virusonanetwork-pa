@@ -143,7 +143,7 @@ to gain-resistance ;; turtle procedure
     set infected? false
     set resistant? true
     set dead? false
-    set color blue
+    set color gray
     ask my-links [ set color gray ]
     set infected-ticks 0
   ]
@@ -451,7 +451,7 @@ increase-node-resistance
 increase-node-resistance
 0
 30
-10.0
+1.0
 0.5
 1
 %
@@ -466,7 +466,7 @@ increase-virus-force
 increase-virus-force
 0
 30
-10.0
+1.0
 0.5
 1
 %
